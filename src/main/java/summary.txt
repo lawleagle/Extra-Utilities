@@ -1,0 +1,9 @@
+Summary for ./mods/extrautilities-1.2.12-deobf.jar
+Decompiled with CFR 0.152
+
+
+com.rwtema.extrautils.block.BlockConveyor
+----------------------------
+
+onEntityCollidedWithBlock(net.minecraft.world.World int int int net.minecraft.entity.Entity )
+  Handled impossible loop by adding 'first' condition
