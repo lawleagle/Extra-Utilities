@@ -23,22 +23,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockQuarryUpgrades extends BlockMultiBlockSelection implements IBlockTooltip {
   int[] powerDrain = new int[16];
-  
+
   IIcon[] icons = new IIcon[16];
-  
+
   IIcon[] iconsFlipped = new IIcon[16];
-  
+
   IIcon arms = null;
-  
+
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister p_149651_1_) {
     for (int i = 0; i < 10; i++) {
       this.icons[i] = p_149651_1_.registerIcon("extrautils:quarry_upgrades/quarryUpgrade" + i);
       this.iconsFlipped[i] = (IIcon)new IconFlipped(this.icons[i], true, false);
-    } 
+    }
     this.blockIcon = this.arms = p_149651_1_.registerIcon("extrautils:quarry_upgrades/quarryUpgradeArm");
   }
-  
+
   public BlockQuarryUpgrades() {
     super(Material.rock);
     setBlockName("extrautils:enderQuarryUpgrade");
@@ -47,15 +47,15 @@ public class BlockQuarryUpgrades extends BlockMultiBlockSelection implements IBl
     setHardness(1.0F);
     setStepSound(soundTypeStone);
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, List<ItemStack> p_149666_3_) {
+  public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, List p_149666_3_) {
     for (int i = 0; i < 10; i++)
-      p_149666_3_.add(new ItemStack(p_149666_1_, 1, i)); 
+      p_149666_3_.add(new ItemStack(p_149666_1_, 1, i));
   }
-  
+
   public void prepareForRender(String label) {}
-  
+
   public BoxModel getWorldModel(IBlockAccess world, int x, int y, int z) {
     int metadata = world.getBlockMetadata(x, y, z);
     BoxModel model = getInventoryModel(metadata);
@@ -67,11 +67,11 @@ public class BlockQuarryUpgrades extends BlockMultiBlockSelection implements IBl
         b.rotateToSide(dir);
         b.texture = this.arms;
         model.add(b);
-      } 
-    } 
+      }
+    }
     return model;
   }
-  
+
   public BoxModel getInventoryModel(int metadata) {
     BoxModel b = new BoxModel();
     b.addBoxI(1, 1, 1, 15, 15, 15);
@@ -81,12 +81,12 @@ public class BlockQuarryUpgrades extends BlockMultiBlockSelection implements IBl
     ((Box)b.get(0)).textureSide[5] = this.iconsFlipped[metadata];
     return b;
   }
-  
+
   public int damageDropped(int p_149692_1_) {
     return p_149692_1_;
   }
-  
-  public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
+
+  public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
     int meta = par1ItemStack.getItemDamage() & 0xF;
     double v = TileEntityEnderQuarry.powerMultipliers[meta];
     String format = XUHelper.niceFormat(v);

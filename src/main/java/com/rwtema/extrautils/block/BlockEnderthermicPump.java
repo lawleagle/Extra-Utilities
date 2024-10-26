@@ -19,11 +19,11 @@ import net.minecraft.world.World;
 
 public class BlockEnderthermicPump extends Block {
   IIcon pump;
-  
+
   IIcon pumpTop;
-  
+
   IIcon pumpBottom;
-  
+
   public BlockEnderthermicPump() {
     super(Material.rock);
     setBlockName("extrautils:enderThermicPump");
@@ -32,16 +32,16 @@ public class BlockEnderthermicPump extends Block {
     setHardness(1.0F);
     setStepSound(soundTypeStone);
   }
-  
+
   public boolean hasTileEntity(int metadata) {
     return true;
   }
-  
-  @SideOnly(Side.CLIENT)
-  public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
+
+  @SideOnly(Side.CLIENT) @Override
+  public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     par3List.add(new ItemStack(par1, 1, 0));
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister par1IIconRegister) {
     this.pump = par1IIconRegister.registerIcon("extrautils:enderThermicPump_side");
@@ -49,24 +49,24 @@ public class BlockEnderthermicPump extends Block {
     this.pumpBottom = par1IIconRegister.registerIcon("extrautils:enderThermicPump");
     super.registerBlockIcons(par1IIconRegister);
   }
-  
+
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(int par1, int par2) {
     if (par1 == 0)
-      return this.pumpBottom; 
+      return this.pumpBottom;
     if (par1 == 1)
-      return this.pumpTop; 
+      return this.pumpTop;
     return this.pump;
   }
-  
+
   public TileEntity createTileEntity(World world, int metadata) {
     return (TileEntity)new TileEntityEnderThermicLavaPump();
   }
-  
+
   public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLivingBase par5EntityLiving, ItemStack par6ItemStack) {
     TileEntity tile = par1World.getTileEntity(par2, par3, par4);
     if (tile instanceof TileEntityEnderThermicLavaPump && par5EntityLiving instanceof EntityPlayer)
-      ((TileEntityEnderThermicLavaPump)tile).owner = (EntityPlayer)par5EntityLiving; 
+      ((TileEntityEnderThermicLavaPump)tile).owner = (EntityPlayer)par5EntityLiving;
   }
 }
 

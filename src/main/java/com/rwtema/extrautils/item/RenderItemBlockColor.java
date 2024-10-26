@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class RenderItemBlockColor implements IItemRenderer {
   private Random rand = (Random)XURandom.getInstance();
-  
+
   public boolean handleRenderType(ItemStack item, IItemRenderer.ItemRenderType type) {
     switch (type) {
       case ENTITY:
@@ -35,31 +35,31 @@ public class RenderItemBlockColor implements IItemRenderer {
         return true;
       case INVENTORY:
         return true;
-    } 
+    }
     return false;
   }
-  
+
   public boolean shouldUseRenderHelper(IItemRenderer.ItemRenderType type, ItemStack item, IItemRenderer.ItemRendererHelper helper) {
     return true;
   }
-  
+
   public void renderItem(IItemRenderer.ItemRenderType type, ItemStack item, Object... data) {
-    EntityClientPlayerMP entityClientPlayerMP;
+    EntityClientPlayerMP entityClientPlayerMP = null;
     if (item == null || !(item.getItem() instanceof ItemBlock))
-      return; 
+      return;
     Block block = ((ItemBlock)item.getItem()).field_150939_a;
     if (block == null || data == null || data.length == 0)
-      return; 
+      return;
     int metadata = item.getItemDamage();
     if (metadata < 0 || metadata >= 16)
-      metadata = this.rand.nextInt(16); 
+      metadata = this.rand.nextInt(16);
     RenderBlocks renderer = (RenderBlocks)data[0];
     Entity holder = null;
-    if (data.length > 1 && 
+    if (data.length > 1 &&
       data[1] instanceof Entity)
-      holder = (Entity)data[1]; 
+      holder = (Entity)data[1];
     if (holder == null)
-      entityClientPlayerMP = (Minecraft.getMinecraft()).thePlayer; 
+      entityClientPlayerMP = (Minecraft.getMinecraft()).thePlayer;
     Tessellator var4 = Tessellator.instance;
     block.setBlockBoundsForItemRender();
     renderer.setRenderBoundsFromBlock(block);
@@ -72,19 +72,19 @@ public class RenderItemBlockColor implements IItemRenderer {
       default:
         GL11.glTranslatef(-0.5F, -0.0F, -0.5F);
         break;
-    } 
+    }
     float f = BlockColor.initColor[metadata][0];
     float f1 = BlockColor.initColor[metadata][1];
     float f2 = BlockColor.initColor[metadata][2];
-    if (entityClientPlayerMP != null && 
+    if (entityClientPlayerMP != null &&
       ((Entity)entityClientPlayerMP).worldObj != null) {
       TileEntity tiledata = ((Entity)entityClientPlayerMP).worldObj.getTileEntity(BlockColorData.dataBlockX((int)Math.floor(((Entity)entityClientPlayerMP).posX)), BlockColorData.dataBlockY((int)((Entity)entityClientPlayerMP).posY), BlockColorData.dataBlockZ((int)Math.floor(((Entity)entityClientPlayerMP).posZ)));
       if (tiledata instanceof TileEntityBlockColorData) {
         f = ((TileEntityBlockColorData)tiledata).palette[metadata][0];
         f1 = ((TileEntityBlockColorData)tiledata).palette[metadata][1];
         f2 = ((TileEntityBlockColorData)tiledata).palette[metadata][2];
-      } 
-    } 
+      }
+    }
     if (EntityRenderer.anaglyphEnable) {
       float f3 = (f * 30.0F + f1 * 59.0F + f2 * 11.0F) / 100.0F;
       float f4 = (f * 30.0F + f1 * 70.0F) / 100.0F;
@@ -92,7 +92,7 @@ public class RenderItemBlockColor implements IItemRenderer {
       f = f3;
       f1 = f4;
       f2 = f5;
-    } 
+    }
     OpenGlHelper.glBlendFunc(770, 771, 1, 0);
     GL11.glEnable(3008);
     GL11.glColor4f(f, f1, f2, 1.0F);

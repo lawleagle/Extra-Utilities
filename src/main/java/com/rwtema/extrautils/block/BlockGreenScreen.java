@@ -23,53 +23,53 @@ public class BlockGreenScreen extends Block {
     setHardness(1.0F);
     setResistance(10.0F);
   }
-  
-  private static final float[][] cols = new float[][] { 
-      { 1.0F, 1.0F, 1.0F }, { 1.0F, 0.5F, 0.0F }, { 1.0F, 0.0F, 1.0F }, { 0.0F, 0.5F, 0.85F }, { 1.0F, 1.0F, 0.0F }, { 0.0F, 1.0F, 0.0F }, { 1.0F, 0.6F, 0.65F }, { 0.5F, 0.5F, 0.5F }, { 0.8F, 0.8F, 0.8F }, { 0.0F, 1.0F, 1.0F }, 
+
+  private static final float[][] cols = new float[][] {
+      { 1.0F, 1.0F, 1.0F }, { 1.0F, 0.5F, 0.0F }, { 1.0F, 0.0F, 1.0F }, { 0.0F, 0.5F, 0.85F }, { 1.0F, 1.0F, 0.0F }, { 0.0F, 1.0F, 0.0F }, { 1.0F, 0.6F, 0.65F }, { 0.5F, 0.5F, 0.5F }, { 0.8F, 0.8F, 0.8F }, { 0.0F, 1.0F, 1.0F },
       { 0.7F, 0.2F, 1.0F }, { 0.0F, 0.0F, 1.0F }, { 0.5F, 0.2F, 0.0F }, { 0.0F, 0.6F, 0.0F }, { 1.0F, 0.0F, 0.0F }, { 0.0F, 0.0F, 0.0F } };
-  
+
   public static int getLightLevel(int metadata) {
     return (int)((cols[metadata][0] + cols[metadata][1] + cols[metadata][2]) / 3.0F * 15.0F);
   }
-  
+
   public int getLightValue(IBlockAccess world, int x, int y, int z) {
-    if (world instanceof World && 
+    if (world instanceof World &&
       !((World)world).blockExists(x, y, z))
-      return 0; 
+      return 0;
     return getLightLevel(world.getBlockMetadata(x, y, z));
   }
-  
+
   @SideOnly(Side.CLIENT)
   public int getRenderColor(int p_149741_1_) {
     if (p_149741_1_ == 15)
-      return 0; 
+      return 0;
     float[] col = cols[p_149741_1_ & 0xF];
     return (int)(col[0] * 255.0F) << 16 | (int)(col[1] * 255.0F) << 8 | (int)(col[2] * 255.0F);
   }
-  
+
   @SideOnly(Side.CLIENT)
   public int colorMultiplier(IBlockAccess world, int x, int y, int z) {
     return getRenderColor(world.getBlockMetadata(x, y, z));
   }
-  
+
   public int damageDropped(int p_149692_1_) {
     return p_149692_1_;
   }
-  
-  @SideOnly(Side.CLIENT)
-  public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, List<ItemStack> p_149666_3_) {
+
+  @SideOnly(Side.CLIENT) @Override
+  public void getSubBlocks(Item p_149666_1_, CreativeTabs p_149666_2_, List p_149666_3_) {
     for (int i = 0; i < 16; i++)
-      p_149666_3_.add(new ItemStack(p_149666_1_, 1, i)); 
+      p_149666_3_.add(new ItemStack(p_149666_1_, 1, i));
   }
-  
+
   public boolean renderAsNormalBlock() {
     return false;
   }
-  
+
   public boolean isNormalCube(IBlockAccess world, int x, int y, int z) {
     return true;
   }
-  
+
   public int getRenderType() {
     return ExtraUtilsProxy.fullBrightBlockID;
   }

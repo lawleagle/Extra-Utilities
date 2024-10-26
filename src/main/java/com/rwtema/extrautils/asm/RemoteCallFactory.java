@@ -11,28 +11,28 @@ import org.objectweb.asm.Type;
 
 public class RemoteCallFactory {
   static LaunchClassLoader cl = (LaunchClassLoader)RemoteCallFactory.class.getClassLoader();
-  
+
   static Method m_defineClass;
-  
+
   static {
     try {
       m_defineClass = ClassLoader.class.getDeclaredMethod("defineClass", new Class[] { String.class, byte[].class, int.class, int.class });
       m_defineClass.setAccessible(true);
     } catch (Exception e) {
       throw new RuntimeException(e);
-    } 
+    }
   }
-  
+
   public static IObjectEvaluate<ItemStack> pulverizer = getEvaluator("cofh.thermalexpansion.util.crafting.PulverizerManager", "recipeExists", ItemStack.class);
-  
-  public static <T> IObjectEvaluate<T> getEvaluator(String baseClass, String baseMethod, Class<Object> param) {
+
+  public static <T> IObjectEvaluate<T> getEvaluator(String baseClass, String baseMethod, Class param) {
     try {
       Class<?> clazz = Class.forName(baseClass);
       Method method = clazz.getDeclaredMethod(baseMethod, new Class[] { param });
       assert Modifier.isStatic(method.getModifiers());
     } catch (Exception e) {
       return null;
-    } 
+    }
     String classname = "XU_caller_" + baseClass.replace('.', '_') + "_" + baseMethod + "_" + param.getSimpleName();
     String superName = Type.getInternalName(Object.class);
     ClassWriter cw = new ClassWriter(0);
@@ -50,11 +50,11 @@ public class RemoteCallFactory {
     if (param != null) {
       getData.visitVarInsn(25, 1);
       if (param != Object.class)
-        getData.visitTypeInsn(192, Type.getInternalName(param)); 
+        getData.visitTypeInsn(192, Type.getInternalName(param));
       getData.visitMethodInsn(184, baseClass.replace('.', '/'), baseMethod, Type.getMethodDescriptor(Type.BOOLEAN_TYPE, new Type[] { Type.getType(param) }), false);
     } else {
       getData.visitMethodInsn(184, baseClass.replace('.', '/'), baseMethod, Type.getMethodDescriptor(Type.BOOLEAN_TYPE, new Type[0]), false);
-    } 
+    }
     getData.visitInsn(172);
     getData.visitMaxs(1, 2);
     getData.visitEnd();
@@ -65,15 +65,15 @@ public class RemoteCallFactory {
       return clazz.newInstance();
     } catch (Throwable e) {
       throw Throwables.propagate(e);
-    } 
+    }
   }
-  
+
   public static IObjectEvaluate nullValuate = new IObjectEvaluate() {
       public boolean evaluate(Object object) {
         return false;
       }
     };
-  
+
   public static interface IObjectEvaluate<T> {
     boolean evaluate(T param1T);
   }

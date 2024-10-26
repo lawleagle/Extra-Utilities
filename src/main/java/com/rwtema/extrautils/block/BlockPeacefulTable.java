@@ -34,7 +34,7 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 
 public class BlockPeacefulTable extends BlockMultiBlock {
   private IIcon[] icons;
-  
+
   public BlockPeacefulTable() {
     super(Material.wood);
     setCreativeTab((CreativeTabs)ExtraUtils.creativeTabExtraUtils);
@@ -45,7 +45,7 @@ public class BlockPeacefulTable extends BlockMultiBlock {
     setHardness(1.0F);
     setResistance(10.0F).setStepSound(soundTypeWood);
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister par1IIconRegister) {
     this.icons = new IIcon[3];
@@ -53,11 +53,11 @@ public class BlockPeacefulTable extends BlockMultiBlock {
     this.icons[1] = par1IIconRegister.registerIcon("extrautils:peaceful_table_top");
     this.icons[2] = par1IIconRegister.registerIcon("extrautils:peaceful_table_side");
   }
-  
+
   public void updateTick(World world, int x, int y, int z, Random par5Random) {
     if (!world.isRemote && world instanceof WorldServer) {
       if (!ExtraUtils.peacefulTableInAllDifficulties && world.difficultySetting != EnumDifficulty.PEACEFUL)
-        return; 
+        return;
       BiomeGenBase.SpawnListEntry var7 = ((WorldServer)world).spawnRandomCreature(EnumCreatureType.monster, x, y, z);
       if (var7 != null) {
         EntityLiving t;
@@ -70,26 +70,26 @@ public class BlockPeacefulTable extends BlockMultiBlock {
             IInventory inv = (IInventory)tile;
             for (int i = 0; i < inv.getSizeInventory(); i++) {
               ItemStack item = inv.getStackInSlot(i);
-              if (item != null && 
+              if (item != null &&
                 item.getItem() instanceof net.minecraft.item.ItemSword) {
                 swordInv = inv;
                 swordSlot = i;
                 sword = item;
                 break;
-              } 
-            } 
+              }
+            }
             if (sword != null)
-              break; 
-          } 
-        } 
+              break;
+          }
+        }
         if (sword == null)
-          return; 
+          return;
         try {
-          t = var7.entityClass.getConstructor(new Class[] { World.class }).newInstance(new Object[] { world });
+          t = (EntityLiving)var7.entityClass.getConstructor(new Class[] { World.class }).newInstance(new Object[] { world });
         } catch (Exception var31) {
           var31.printStackTrace();
           return;
-        } 
+        }
         List list1 = world.selectEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox((x - 2), y, (z - 2), (x + 3), (y + 4), (z + 2)), IEntitySelector.selectAnything);
         t.setLocationAndAngles(x + 0.5D, y + 1.25D, z + 0.5D, par5Random.nextFloat() * 360.0F, 0.0F);
         world.spawnEntityInWorld((Entity)t);
@@ -107,7 +107,7 @@ public class BlockPeacefulTable extends BlockMultiBlock {
             swordInv.setInventorySlotContents(swordSlot, null);
           } else {
             swordInv.setInventorySlotContents(swordSlot, fakePlayer.getCurrentEquippedItem());
-          } 
+          }
         } else {
           if (fakePlayer.getCurrentEquippedItem() == null || (fakePlayer.getCurrentEquippedItem()).stackSize == 0) {
             swordInv.setInventorySlotContents(swordSlot, null);
@@ -115,16 +115,16 @@ public class BlockPeacefulTable extends BlockMultiBlock {
             if (h1 > h2) {
               float h;
               for (h = h2; h > 0.0F; h -= h1 - h2)
-                sword.hitEntity((EntityLivingBase)t, (EntityPlayer)fakePlayer); 
-            } 
+                sword.hitEntity((EntityLivingBase)t, (EntityPlayer)fakePlayer);
+            }
             if (sword.stackSize == 0)
-              swordInv.setInventorySlotContents(swordSlot, null); 
-          } 
+              swordInv.setInventorySlotContents(swordSlot, null);
+          }
           t.onDeath(DamageSource.causePlayerDamage((EntityPlayer)fakePlayer));
           t.motionX = 0.0D;
           t.motionY = 0.0D;
           t.motionZ = 0.0D;
-        } 
+        }
         fakePlayer.setCurrentItemOrArmor(0, null);
         t.setDead();
         List list2 = world.getEntitiesWithinAABB(EntityItem.class, AxisAlignedBB.getBoundingBox((x - 2), y, (z - 2), (x + 3), (y + 4), (z + 2)));
@@ -140,34 +140,34 @@ public class BlockPeacefulTable extends BlockMultiBlock {
                   ((EntityItem)aList2).setEntityItemStack(itemstack1);
                 } else {
                   ((EntityItem)aList2).setDead();
-                } 
-              } 
-            } 
+                }
+              }
+            }
             ((EntityItem)aList2).setDead();
-          } 
-        } 
-      } 
-    } 
+          }
+        }
+      }
+    }
   }
-  
+
   public void onBlockAdded(World world, int x, int y, int z) {
     if (!world.isRemote)
-      world.scheduleBlockUpdate(x, y, z, this, 5 + world.rand.nextInt(100)); 
+      world.scheduleBlockUpdate(x, y, z, this, 5 + world.rand.nextInt(100));
   }
-  
+
   public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity par5Entity) {
     if (par5Entity instanceof net.minecraft.entity.item.EntityXPOrb)
-      par5Entity.setDead(); 
+      par5Entity.setDead();
   }
-  
+
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(int par1, int x) {
     int i = Math.min(par1, 2);
     return this.icons[i];
   }
-  
+
   public void prepareForRender(String label) {}
-  
+
   public BoxModel getWorldModel(IBlockAccess world, int x, int y, int z) {
     BoxModel boxes = new BoxModel();
     float h = 0.0625F;
@@ -178,7 +178,7 @@ public class BlockPeacefulTable extends BlockMultiBlock {
     boxes.add((new Box(0.0625F, 0.0F, 0.0625F, 0.3125F, 0.75F, 0.3125F)).rotateY(3));
     return boxes;
   }
-  
+
   public BoxModel getInventoryModel(int metadata) {
     return getWorldModel((IBlockAccess)null, 0, 0, 0);
   }

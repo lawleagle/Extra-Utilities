@@ -27,27 +27,28 @@ public class RenderItemBlockDrum implements IItemRenderer {
         return true;
       case INVENTORY:
         return true;
-    } 
+    }
     return false;
   }
-  
+
   public boolean shouldUseRenderHelper(IItemRenderer.ItemRenderType type, ItemStack item, IItemRenderer.ItemRendererHelper helper) {
     return true;
   }
-  
+
   public void renderItem(IItemRenderer.ItemRenderType type, ItemStack item, Object... data) {
     if (!(item.getItem() instanceof ItemBlock))
-      return; 
+      return;
     Block block = ((ItemBlock)item.getItem()).field_150939_a;
     if (block == null)
-      return; 
+      return;
     RenderBlocks renderer = (RenderBlocks)data[0];
     Entity holder = null;
-    if (data.length > 1 && 
+    if (data.length > 1 &&
       data[1] instanceof Entity)
-      holder = (Entity)data[1]; 
+      holder = (Entity)data[1];
+    EntityClientPlayerMP entityClientPlayerMP;
     if (holder == null)
-      EntityClientPlayerMP entityClientPlayerMP = (Minecraft.getMinecraft()).thePlayer; 
+      entityClientPlayerMP = (Minecraft.getMinecraft()).thePlayer;
     Tessellator var4 = Tessellator.instance;
     block.setBlockBoundsForItemRender();
     renderer.setRenderBoundsFromBlock(block);
@@ -60,7 +61,7 @@ public class RenderItemBlockDrum implements IItemRenderer {
       default:
         GL11.glTranslatef(-0.5F, -0.0F, -0.5F);
         break;
-    } 
+    }
     OpenGlHelper.glBlendFunc(770, 771, 1, 0);
     GL11.glEnable(3008);
     RenderBlockDrum.drawInvBlock(block, item);

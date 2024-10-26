@@ -16,65 +16,65 @@ import net.minecraftforge.fluids.ItemFluidContainer;
 
 public class ItemBlockDrum extends ItemBlockMetadata implements IFluidContainerItem, ICreativeTabSorting {
   protected int capacity = 256000;
-  
+
   public ItemFluidContainer slaveItem = new ItemFluidContainer(-1, this.capacity);
-  
+
   public ItemBlockDrum(Block b) {
     super(b);
   }
-  
+
   public void setCapacityFromMeta(int meta) {
     this.slaveItem.setCapacity(TileEntityDrum.getCapacityFromMetadata(meta));
   }
-  
+
   public ItemFluidContainer setCapacity(int capacity) {
     return this.slaveItem.setCapacity(capacity);
   }
-  
+
   public FluidStack getFluid(ItemStack container) {
     setCapacityFromMeta(container.getItemDamage());
     return this.slaveItem.getFluid(container);
   }
-  
+
   public int getCapacity(ItemStack container) {
     setCapacityFromMeta(container.getItemDamage());
     return this.slaveItem.getCapacity(container);
   }
-  
+
   public int fill(ItemStack container, FluidStack resource, boolean doFill) {
     setCapacityFromMeta(container.getItemDamage());
     return this.slaveItem.fill(container, resource, doFill);
   }
-  
+
   public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
     setCapacityFromMeta(container.getItemDamage());
     FluidStack t = this.slaveItem.drain(container, maxDrain, doDrain);
     if (this.slaveItem.getFluid(container) != null && (this.slaveItem.getFluid(container)).amount < 0) {
       container.setTagCompound(null);
       throw new RuntimeException("Fluid container has been drained into negative numbers. This is a Forge bug.");
-    } 
+    }
     return t;
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void addInformation(ItemStack item, EntityPlayer par2EntityPlayer, List<String> info, boolean par4) {
+  public void addInformation(ItemStack item, EntityPlayer par2EntityPlayer, List info, boolean par4) {
     setCapacityFromMeta(item.getItemDamage());
     FluidStack fluid = this.slaveItem.getFluid(item);
     if (fluid != null) {
       info.add(XUHelper.getFluidName(fluid) + ": " + String.format(Locale.ENGLISH, "%,d", new Object[] { Integer.valueOf(fluid.amount) }) + " / " + String.format(Locale.ENGLISH, "%,d", new Object[] { Integer.valueOf(this.slaveItem.getCapacity(null)) }));
     } else {
       info.add("Empty: 0 / " + String.format(Locale.ENGLISH, "%,d", new Object[] { Integer.valueOf(this.slaveItem.getCapacity(null)) }));
-    } 
+    }
   }
-  
+
   public String getItemStackDisplayName(ItemStack item) {
     String s = super.getItemStackDisplayName(item);
     FluidStack fluid = getFluid(item);
     if (fluid != null)
-      s = XUHelper.getFluidName(fluid) + " " + s; 
+      s = XUHelper.getFluidName(fluid) + " " + s;
     return s.trim();
   }
-  
+
   public String getSortingName(ItemStack item) {
     return super.getItemStackDisplayName(item) + ":" + getItemStackDisplayName(item);
   }

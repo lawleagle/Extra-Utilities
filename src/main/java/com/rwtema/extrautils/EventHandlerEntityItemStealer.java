@@ -16,29 +16,29 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
 public class EventHandlerEntityItemStealer {
   private static LinkedList<ItemStack> items = new LinkedList<ItemStack>();
-  
+
   private static LinkedList<EntityItem> entityItems = new LinkedList<EntityItem>();
-  
+
   private static boolean capturing = false;
-  
+
   private static boolean killExperience = false;
-  
+
   public static void startCapture(boolean killExp) {
     killExperience = killExp;
     startCapture();
   }
-  
+
   public static void startCapture() {
     if (capturing)
-      throw new IllegalStateException("Capturing item drops twice"); 
+      throw new IllegalStateException("Capturing item drops twice");
     capturing = true;
   }
-  
+
   public static void stopCapture() {
     capturing = false;
     killExperience = false;
   }
-  
+
   public static List<EntityItem> getCapturedEntities() {
     capturing = false;
     List<EntityItem> i = new ArrayList<EntityItem>();
@@ -47,7 +47,7 @@ public class EventHandlerEntityItemStealer {
     items.clear();
     return i;
   }
-  
+
   public static List<ItemStack> getCapturedItemStacks() {
     capturing = false;
     List<ItemStack> i = new ArrayList<ItemStack>();
@@ -56,42 +56,42 @@ public class EventHandlerEntityItemStealer {
     items.clear();
     return i;
   }
-  
+
   @SubscribeEvent(priority = EventPriority.LOWEST)
   public void onEntityJoinWorld(EntityJoinWorldEvent event) {
     if (!capturing || event.entity.worldObj.isRemote)
-      return; 
+      return;
     Entity entity = event.entity;
     if (entity.getClass() == EntitySilverfish.class) {
       ((EntitySilverfish)entity).onDeath(DamageSource.cactus);
       entity.setDead();
       event.setCanceled(true);
       return;
-    } 
+    }
     if (killExperience && entity.getClass() == EntityXPOrb.class) {
       entity.setDead();
       event.setCanceled(true);
       return;
-    } 
+    }
     if (isEntityItem(entity.getClass())) {
       ItemStack stack = entity.getDataWatcher().getWatchableObjectItemStack(10);
       if (stack == null)
-        return; 
+        return;
       items.add(stack);
       entityItems.add((EntityItem)entity);
       entity.setDead();
       event.setCanceled(true);
-    } 
+    }
   }
-  
-  public static final HashMap<Class, Boolean> clazztypes = new HashMap<Class<?>, Boolean>();
-  
+
+  public static final HashMap<Class<?>, Boolean> clazztypes = new HashMap<>();
+
   public static boolean isEntityItem(Class<?> clazz) {
     Boolean aBoolean = clazztypes.get(clazz);
     if (aBoolean == null) {
       aBoolean = Boolean.valueOf(EntityItem.class.isAssignableFrom(clazz));
       clazztypes.put(clazz, aBoolean);
-    } 
+    }
     return aBoolean.booleanValue();
   }
 }

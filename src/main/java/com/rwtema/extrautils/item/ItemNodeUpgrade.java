@@ -30,59 +30,59 @@ import net.minecraftforge.fluids.FluidTank;
 
 public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpecialFilterItem, ISpecialFilterFluid {
   private static final int numUpgrades = 11;
-  
+
   private IIcon[] icons = new IIcon[11];
-  
+
   public ItemNodeUpgrade() {
     setHasSubtypes(true);
     setUnlocalizedName("extrautils:nodeUpgrade");
     setCreativeTab((CreativeTabs)ExtraUtils.creativeTabExtraUtils);
   }
-  
+
   public static boolean hasKey(ItemStack filter, String key) {
     if (filter != null) {
       NBTTagCompound tags = filter.getTagCompound();
-      if (tags != null && 
+      if (tags != null &&
         tags.hasKey(key))
-        return true; 
-    } 
+        return true;
+    }
     return false;
   }
-  
+
   public static boolean getPolarity(ItemStack filter) {
     return hasKey(filter, "Inverted");
   }
-  
+
   public static boolean getFuzzyMetadata(ItemStack filter) {
     return hasKey(filter, "FuzzyMeta");
   }
-  
+
   public static boolean getFuzzyNBT(ItemStack filter) {
     return hasKey(filter, "FuzzyNBT");
   }
-  
+
   public static boolean matchesFilterBuffer(INodeBuffer item, ItemStack filter) {
     if (item == null)
-      return false; 
+      return false;
     Object buffer = item.getBuffer();
     if (buffer == null)
-      return false; 
+      return false;
     if (buffer instanceof ItemStack)
-      return matchesFilterItem((ItemStack)buffer, filter); 
+      return matchesFilterItem((ItemStack)buffer, filter);
     return (!(buffer instanceof FluidTank) || matchesFilterLiquid(((FluidTank)buffer).getFluid(), filter));
   }
-  
+
   public static boolean isFilter(ItemStack filter) {
     if (filter == null)
-      return false; 
+      return false;
     if (ExtraUtils.nodeUpgrade != null && filter.getItem() == ExtraUtils.nodeUpgrade)
-      return (filter.getItemDamage() == 1 || filter.getItemDamage() == 10); 
+      return (filter.getItemDamage() == 1 || filter.getItemDamage() == 10);
     return filter.getItem() instanceof ISpecialFilterItem;
   }
-  
+
   public static boolean matchesFilterItem(ItemStack item, ItemStack filter) {
     if (item == null || item.getItem() == null || filter == null)
-      return false; 
+      return false;
     if (ExtraUtils.nodeUpgrade != null && filter.getItem() == ExtraUtils.nodeUpgrade) {
       if (filter.getItemDamage() == 1) {
         boolean polarity = !getPolarity(filter);
@@ -95,28 +95,28 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
               ItemStack f = ItemStack.loadItemStackFromNBT(tags.getCompoundTag("items_" + i));
               if (f != null) {
                 if (XUHelper.canItemsStack(f, item, fuzzyMeta, true, fuzzyNBT))
-                  return polarity; 
-                if (isFilter(f) && 
+                  return polarity;
+                if (isFilter(f) &&
                   matchesFilterItem(item, f))
-                  return polarity; 
-              } 
-            } 
-          }  
+                  return polarity;
+              }
+            }
+          }
         return !polarity;
-      } 
+      }
       if (filter.getItemDamage() == 10) {
         Matcher matcher = AdvancedNodeUpgrades.getMatcher(filter);
         return (matcher.matchItem(item) != getPolarity(filter));
-      } 
-    } 
+      }
+    }
     if (filter.getItem() instanceof ISpecialFilterItem)
-      return ((ISpecialFilterItem)filter.getItem()).matchesItem(filter, item); 
+      return ((ISpecialFilterItem)filter.getItem()).matchesItem(filter, item);
     return XUHelper.canItemsStack(item, filter, false, true);
   }
-  
+
   public static boolean matchesFilterLiquid(FluidStack fluid, ItemStack filter) {
     if (fluid == null || filter == null)
-      return false; 
+      return false;
     if (ExtraUtils.nodeUpgrade != null && filter.getItem() == ExtraUtils.nodeUpgrade) {
       if (filter.getItemDamage() == 1) {
         boolean polarity = !getPolarity(filter);
@@ -127,25 +127,25 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
               ItemStack f = ItemStack.loadItemStackFromNBT(tags.getCompoundTag("items_" + i));
               if (f != null) {
                 if (fluid.isFluidEqual(f))
-                  return polarity; 
-                if (isFilter(f) && 
+                  return polarity;
+                if (isFilter(f) &&
                   matchesFilterLiquid(fluid, f))
-                  return polarity; 
-              } 
-            } 
-          }  
+                  return polarity;
+              }
+            }
+          }
         return !polarity;
-      } 
+      }
       if (filter.getItemDamage() == 10) {
         Matcher matcher = AdvancedNodeUpgrades.getMatcher(filter);
         return (matcher.matchFluid(fluid) != getPolarity(filter));
-      } 
-    } 
+      }
+    }
     if (filter.getItem() instanceof ISpecialFilterFluid)
-      ((ISpecialFilterFluid)filter.getItem()).matchesFluid(filter, fluid); 
+      ((ISpecialFilterFluid)filter.getItem()).matchesFluid(filter, fluid);
     return fluid.isFluidEqual(filter);
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void registerIcons(IIconRegister par1IIconRegister) {
     this.icons[0] = par1IIconRegister.registerIcon("extrautils:nodeUpgrade");
@@ -160,28 +160,28 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
     this.icons[9] = par1IIconRegister.registerIcon("extrautils:nodeUpgradePatience");
     this.icons[10] = par1IIconRegister.registerIcon("extrautils:filter2");
   }
-  
+
   @SideOnly(Side.CLIENT)
   public IIcon getIconFromDamage(int par1) {
     return this.icons[par1 % 11];
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
+  public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     for (int i = 0; i < 11; i++)
-      par3List.add(new ItemStack(par1, 1, i)); 
+      par3List.add(new ItemStack(par1, 1, i));
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void addInformation(ItemStack item, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
+  public void addInformation(ItemStack item, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
     if (item.getItemDamage() == 1)
       if (item.getTagCompound() != null) {
         if (getPolarity(item))
-          par3List.add("Inverted"); 
+          par3List.add("Inverted");
         if (getFuzzyMetadata(item))
-          par3List.add("Fuzzy - Ignores Metadata"); 
+          par3List.add("Fuzzy - Ignores Metadata");
         if (getFuzzyNBT(item))
-          par3List.add("Fuzzy - Ignores NBT"); 
+          par3List.add("Fuzzy - Ignores NBT");
         for (int i = 0; i < 9; i++) {
           if (item.getTagCompound().hasKey("items_" + i)) {
             ItemStack temp = ItemStack.loadItemStackFromNBT(item.getTagCompound().getCompoundTag("items_" + i));
@@ -191,16 +191,16 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
                 par3List.add("  " + tempList.get(j));
               } else {
                 par3List.add("     " + tempList.get(j));
-              } 
-            } 
+              }
+            }
             tempList.clear();
-          } 
-        } 
+          }
+        }
       } else {
         par3List.add(EnumChatFormatting.ITALIC + "Right click to select items to filter" + EnumChatFormatting.RESET);
         par3List.add(EnumChatFormatting.ITALIC + "Filters can be placed within other filters to create advanced behaviours" + EnumChatFormatting.RESET);
         par3List.add(EnumChatFormatting.ITALIC + "Craft with" + EnumChatFormatting.RESET);
-      }  
+      }
     if (item.getItemDamage() == 10) {
       Matcher matcher = AdvancedNodeUpgrades.getMatcher(item);
       par3List.add("Filter Program: " + matcher.getLocalizedName());
@@ -210,8 +210,8 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
         par3List.add(EnumChatFormatting.ITALIC + "Right-click to change Filter Program" + EnumChatFormatting.RESET);
         par3List.add(EnumChatFormatting.ITALIC + "Craft with a redstone torch to Invert" + EnumChatFormatting.RESET);
         par3List.add(EnumChatFormatting.ITALIC + "Can be placed in normal filters to create advanced behaviours" + EnumChatFormatting.RESET);
-      } 
-    } 
+      }
+    }
     if (item.getItemDamage() == 5 || item.getItemDamage() == 6) {
       par3List.set(0, ((String)par3List.get(0)).replaceFirst(EnumChatFormatting.ITALIC + item.getDisplayName() + EnumChatFormatting.RESET, getItemStackDisplayName(item)));
       if (!item.hasDisplayName()) {
@@ -224,11 +224,11 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
           par3List.add("Public Spectrum");
         } else {
           par3List.add("Private Spectrum - " + s);
-        } 
-      } 
-    } 
+        }
+      }
+    }
   }
-  
+
   public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
     if (!par2World.isRemote) {
       Matcher matcher;
@@ -242,7 +242,7 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
             PacketTempChat.sendChat(par3EntityPlayer, (IChatComponent)new ChatComponentText("Spectrum set to private"));
             XUHelper.setPlayerOwner(par1ItemStack, par3EntityPlayer.getGameProfile().getName());
             break;
-          } 
+          }
           PacketTempChat.sendChat(par3EntityPlayer, (IChatComponent)new ChatComponentText("Spectrum set to public"));
           XUHelper.setPlayerOwner(par1ItemStack, "");
           break;
@@ -250,27 +250,27 @@ public class ItemNodeUpgrade extends Item implements ICreativeTabSorting, ISpeci
           matcher = AdvancedNodeUpgrades.nextEntry(par1ItemStack, !par3EntityPlayer.isSneaking());
           PacketTempChat.sendChat(par3EntityPlayer, (new ChatComponentText("Filter Program: ")).appendSibling((IChatComponent)new ChatComponentTranslation(matcher.unlocalizedName, new Object[0])));
           break;
-      } 
-    } 
+      }
+    }
     return par1ItemStack;
   }
-  
+
   public String getUnlocalizedName(ItemStack par1ItemStack) {
     return super.getUnlocalizedName(par1ItemStack) + "." + par1ItemStack.getItemDamage();
   }
-  
+
   public String getSortingName(ItemStack item) {
     if (item.getItemDamage() == 1)
-      return item.getDisplayName(); 
+      return item.getDisplayName();
     ItemStack i = item.copy();
     i.setItemDamage(-1);
     return i.getDisplayName() + item.getDisplayName();
   }
-  
+
   public boolean matchesItem(ItemStack filter, ItemStack item) {
     return matchesFilterItem(item, filter);
   }
-  
+
   public boolean matchesFluid(ItemStack filter, FluidStack fluidstack) {
     return matchesFilterLiquid(fluidstack, filter);
   }

@@ -32,42 +32,42 @@ import net.minecraft.world.World;
 
 public class ItemWateringCan extends Item {
   public static ArrayList<ItemStack> flowers = null;
-  
+
   private static Random rand = (Random)XURandom.getInstance();
-  
+
   IIcon busted = null;
-  
+
   IIcon reinforced = null;
-  
+
   public ThreadLocal<Boolean> watering;
-  
+
   @SideOnly(Side.CLIENT)
   public IIcon getIconFromDamage(int par1) {
     if (par1 == 2)
-      return this.busted; 
+      return this.busted;
     if (par1 == 3)
-      return this.reinforced; 
+      return this.reinforced;
     return this.itemIcon;
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void registerIcons(IIconRegister par1IIconRegister) {
     this.itemIcon = par1IIconRegister.registerIcon(getIconString());
     this.busted = par1IIconRegister.registerIcon("extrautils:watering_can_bust");
     this.reinforced = par1IIconRegister.registerIcon("extrautils:watering_can_reinforced");
   }
-  
+
   public int getMaxItemUseDuration(ItemStack par1ItemStack) {
     return 72000;
   }
-  
+
   public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10) {
     if (par1ItemStack.getItemDamage() != 3 || !XUHelper.isPlayerFake(par2EntityPlayer))
-      return false; 
+      return false;
     waterLocation(par3World, par4 + 0.5D, par5 + 0.5D, par6 + 0.5D, par7, par1ItemStack, par2EntityPlayer);
     return true;
   }
-  
+
   public ItemStack onItemRightClick(ItemStack par1ItemStack, World world, EntityPlayer player) {
     if (par1ItemStack.getItemDamage() != 1) {
       if (XUHelper.isPlayerFake(player)) {
@@ -75,16 +75,16 @@ public class ItemWateringCan extends Item {
           par1ItemStack.setItemDamage(2);
         } else {
           onUsingTick(par1ItemStack, player, 0);
-        } 
-      } else if (par1ItemStack.getItemDamage() == 2 && 
+        }
+      } else if (par1ItemStack.getItemDamage() == 2 &&
         XUHelper.isThisPlayerACheatyBastardOfCheatBastardness(player)) {
         par1ItemStack.setItemDamage(4);
-      } 
+      }
       player.setItemInUse(par1ItemStack, getMaxItemUseDuration(par1ItemStack));
     } else {
       MovingObjectPosition movingobjectposition = getMovingObjectPositionFromPlayer(world, player, true);
       if (movingobjectposition == null)
-        return par1ItemStack; 
+        return par1ItemStack;
       if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
         int i = movingobjectposition.blockX;
         int j = movingobjectposition.blockY;
@@ -94,58 +94,58 @@ public class ItemWateringCan extends Item {
             par1ItemStack.setItemDamage(3);
           } else {
             par1ItemStack.setItemDamage(0);
-          } 
+          }
           return par1ItemStack;
-        } 
-      } 
+        }
+      }
       return par1ItemStack;
-    } 
+    }
     return par1ItemStack;
   }
-  
+
   public String getUnlocalizedName(ItemStack par1ItemStack) {
     if (par1ItemStack.getItemDamage() == 1)
-      return getUnlocalizedName() + ".empty"; 
+      return getUnlocalizedName() + ".empty";
     if (par1ItemStack.getItemDamage() == 2)
-      return getUnlocalizedName() + ".busted"; 
+      return getUnlocalizedName() + ".busted";
     if (par1ItemStack.getItemDamage() == 3)
-      return getUnlocalizedName() + ".reinforced"; 
+      return getUnlocalizedName() + ".reinforced";
     return getUnlocalizedName();
   }
-  
+
   public EnumAction getItemUseAction(ItemStack par1ItemStack) {
     return EnumAction.none;
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
+  public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     par3List.add(new ItemStack(par1, 1, 0));
     par3List.add(new ItemStack(par1, 1, 1));
     par3List.add(new ItemStack(par1, 1, 2));
     par3List.add(new ItemStack(par1, 1, 3));
   }
-  
+
   public void initFlowers() {
     if (flowers != null)
-      return; 
+      return;
     flowers = new ArrayList<ItemStack>();
     if (!Loader.isModLoaded("Forestry"))
-      return; 
+      return;
     try {
       Class<?> flowerManager = Class.forName("forestry.api.apiculture.FlowerManager");
       ArrayList<ItemStack> temp = (ArrayList<ItemStack>)flowerManager.getField("plainFlowers").get(null);
       flowers.addAll(temp);
     } catch (Exception e) {
       e.printStackTrace();
-    } 
+    }
   }
-  
+
   public void onUsingTick(ItemStack stack, EntityPlayer player, int count) {
     MovingObjectPosition pos = getMovingObjectPositionFromPlayer(player.worldObj, player, true);
     if (pos != null)
-      waterLocation(player.worldObj, pos.hitVec.xCoord, pos.hitVec.yCoord, pos.hitVec.zCoord, pos.sideHit, stack, player); 
+      waterLocation(player.worldObj, pos.hitVec.xCoord, pos.hitVec.yCoord, pos.hitVec.zCoord, pos.sideHit, stack, player);
   }
-  
+
   public ItemWateringCan() {
     this.watering = new ThreadLocal<Boolean>();
     setCreativeTab((CreativeTabs)ExtraUtils.creativeTabExtraUtils);
@@ -154,25 +154,25 @@ public class ItemWateringCan extends Item {
     setHasSubtypes(false);
     setMaxStackSize(1);
   }
-  
+
   public void waterLocation(World worldObj, double hitX, double hitY, double hitZ, int side, ItemStack stack, EntityPlayer play) {
     int range = 1;
     if (stack.getItemDamage() == 3)
-      range = 3; 
+      range = 3;
     if (stack.getItemDamage() == 4)
-      range = 5; 
+      range = 5;
     if (this.watering.get() == Boolean.TRUE)
-      return; 
+      return;
     this.watering.set(Boolean.TRUE);
     waterLocation(worldObj, hitX, hitY, hitZ, side, stack, play, range);
     this.watering.set(Boolean.FALSE);
   }
-  
+
   private void waterLocation(World worldObj, double hitX, double hitY, double hitZ, int side, ItemStack stack, EntityPlayer play, int range) {
     List enderman = worldObj.getEntitiesWithinAABB(EntityEnderman.class, AxisAlignedBB.getBoundingBox(hitX - range, hitY - range, hitZ - range, hitX + range, hitY + 6.0D, hitZ + range));
     if (enderman != null)
       for (Object anEnderman : enderman)
-        ((EntityEnderman)anEnderman).attackEntityFrom(DamageSource.drown, 1.0F);  
+        ((EntityEnderman)anEnderman).attackEntityFrom(DamageSource.drown, 1.0F);
     boolean cheat = (stack.getItemDamage() == 4 && (XUHelper.isThisPlayerACheatyBastardOfCheatBastardness(play) || LogHelper.isDeObf || XUHelper.isPlayerFake(play)));
     if (worldObj.isRemote) {
       double dx = Facing.offsetsXForSide[side], dy = Facing.offsetsYForSide[side], dz = Facing.offsetsZForSide[side];
@@ -183,9 +183,9 @@ public class ItemWateringCan extends Item {
           worldObj.spawnParticle("splash", x2 + worldObj.rand.nextGaussian() * 0.6D * range, y2, z2 + worldObj.rand.nextGaussian() * 0.6D * range, 0.0D, 0.0D, 0.0D);
           i++;
           continue;
-        } 
+        }
         break;
-      } 
+      }
     } else {
       List ents = worldObj.getEntitiesWithinAABB(Entity.class, AxisAlignedBB.getBoundingBox(hitX - range, hitY - range, hitZ - range, hitX + range, hitY + range + 6.0D, hitZ + range));
       if (ents != null)
@@ -193,17 +193,17 @@ public class ItemWateringCan extends Item {
           if (((Entity)ent).isBurning()) {
             float p = 0.01F;
             if (ent instanceof EntityPlayer)
-              p = 0.333F; 
+              p = 0.333F;
             ((Entity)ent).extinguish();
             if (worldObj.rand.nextDouble() < p) {
               if (stack.getItemDamage() < 3)
-                stack.setItemDamage(1); 
+                stack.setItemDamage(1);
               if (play != null)
-                play.stopUsingItem(); 
+                play.stopUsingItem();
               return;
-            } 
-          } 
-        }  
+            }
+          }
+        }
       int blockX = (int)Math.floor(hitX);
       int blockY = (int)Math.floor(hitY);
       int blockZ = (int)Math.floor(hitZ);
@@ -213,28 +213,28 @@ public class ItemWateringCan extends Item {
             Block id = worldObj.getBlock(x, y, z);
             if (!worldObj.isAirBlock(x, y, z)) {
               if (id == Blocks.fire)
-                worldObj.setBlockToAir(x, y, z); 
-              if (id == Blocks.flowing_lava && 
+                worldObj.setBlockToAir(x, y, z);
+              if (id == Blocks.flowing_lava &&
                 worldObj.rand.nextInt(2) == 0)
-                Blocks.flowing_lava.updateTick(worldObj, x, y, z, worldObj.rand); 
-              if (id == Blocks.farmland && 
+                Blocks.flowing_lava.updateTick(worldObj, x, y, z, worldObj.rand);
+              if (id == Blocks.farmland &&
                 worldObj.getBlockMetadata(x, y, z) < 7)
-                worldObj.setBlockMetadataWithNotify(x, y, z, 7, 2); 
+                worldObj.setBlockMetadataWithNotify(x, y, z, 7, 2);
               int timer = -1;
               if (id == Blocks.grass) {
                 timer = 20;
-                if (!cheat && worldObj.rand.nextInt(4500) == 0 && 
+                if (!cheat && worldObj.rand.nextInt(4500) == 0 &&
                   worldObj.isAirBlock(x, y + 1, z)) {
                   initFlowers();
                   if (flowers.size() > 0 && worldObj.rand.nextInt(5) == 0) {
                     ItemStack flower = flowers.get(worldObj.rand.nextInt(flowers.size()));
-                    if (flower.getItem() instanceof ItemBlock && 
+                    if (flower.getItem() instanceof ItemBlock &&
                       play != null)
-                      ((ItemBlock)flower.getItem()).placeBlockAt(flower, play, worldObj, x, y + 1, z, 1, 0.5F, 1.0F, 0.5F, flower.getItem().getMetadata(flower.getItemDamage())); 
+                      ((ItemBlock)flower.getItem()).placeBlockAt(flower, play, worldObj, x, y + 1, z, 1, 0.5F, 1.0F, 0.5F, flower.getItem().getMetadata(flower.getItemDamage()));
                   } else {
                     worldObj.getBiomeGenForCoords(x, z).plantFlower(worldObj, rand, x, y + 1, z);
-                  } 
-                } 
+                  }
+                }
               } else if (id == Blocks.mycelium) {
                 timer = 20;
               } else if (id == Blocks.wheat) {
@@ -245,17 +245,17 @@ public class ItemWateringCan extends Item {
                 timer = 40;
               } else if (id.getMaterial() == Material.grass) {
                 timer = 20;
-              } 
+              }
               if (stack.getItemDamage() == 2)
-                timer *= 20; 
+                timer *= 20;
               timer /= range;
-              if (timer > 0 && 
+              if (timer > 0 &&
                 id.getTickRandomly())
-                worldObj.scheduleBlockUpdate(x, y, z, id, worldObj.rand.nextInt(timer)); 
-            } 
-          } 
-        } 
-      } 
+                worldObj.scheduleBlockUpdate(x, y, z, id, worldObj.rand.nextInt(timer));
+            }
+          }
+        }
+      }
       if (cheat)
         for (int i = 0; i < 100; i++) {
           for (int j = blockX - range; j <= blockX + range; j++) {
@@ -265,20 +265,20 @@ public class ItemWateringCan extends Item {
                 block.updateTick(worldObj, j, y, z, worldObj.rand);
                 TileEntity tile = worldObj.getTileEntity(j, y, z);
                 if (tile != null && tile.canUpdate() && !tile.isInvalid())
-                  tile.updateEntity(); 
-              } 
-            } 
-          } 
-        }  
-    } 
+                  tile.updateEntity();
+              }
+            }
+          }
+        }
+    }
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List<String> par3List, boolean par4) {
+  public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
     if (par1ItemStack.getItemDamage() == 2) {
       par3List.add("It appears that mechanical hands are not delicate enough");
       par3List.add("to use the watering can properly.");
-    } 
+    }
   }
 }
 

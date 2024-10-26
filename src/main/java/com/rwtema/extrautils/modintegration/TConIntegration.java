@@ -39,23 +39,23 @@ import tconstruct.weaponry.TinkerWeaponry;
 
 public class TConIntegration implements ILoading {
   public static final TConIntegration instance = new TConIntegration();
-  
+
   static {
     MinecraftForge.EVENT_BUS.register(new TConEvents());
   }
-  
+
   public static Fluid unstable = (new Fluid("molten.unstableIngots")).setDensity(3000).setViscosity(6000).setTemperature(1300);
-  
+
   public static Fluid bedrock = (new Fluid("molten.bedrockiumIngots")).setDensity(3000).setViscosity(6000).setTemperature(1300);
-  
+
   public void addBedrockiumMaterial() {
     if (ExtraUtils.bedrockiumBlock == null || ExtraUtils.bedrockium == null) {
       ExtraUtils.tcon_bedrock_material_id = -1;
       return;
-    } 
+    }
     int id = ExtraUtils.tcon_bedrock_material_id;
     if (id <= 0)
-      return; 
+      return;
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger("Id", id);
     String name = "Bedrockium";
@@ -97,15 +97,15 @@ public class TConIntegration implements ILoading {
           }
         });
   }
-  
+
   public void addMagicWoodMaterial() {
     if (ExtraUtils.decorative1 == null) {
       ExtraUtils.tcon_magical_wood_id = -1;
       return;
-    } 
+    }
     int id = ExtraUtils.tcon_magical_wood_id;
     if (id <= 0)
-      return; 
+      return;
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger("Id", id);
     String name = "MagicWood";
@@ -146,15 +146,15 @@ public class TConIntegration implements ILoading {
           }
         });
   }
-  
+
   public void addUnstableMaterial() {
     if (ExtraUtils.unstableIngot == null || ExtraUtils.decorative1 == null) {
       ExtraUtils.tcon_unstable_material_id = -1;
       return;
-    } 
+    }
     final int id = ExtraUtils.tcon_unstable_material_id;
     if (id <= 0)
-      return; 
+      return;
     NBTTagCompound tag = new NBTTagCompound();
     tag.setInteger("Id", id);
     String name = "unstableIngot";
@@ -167,7 +167,7 @@ public class TConIntegration implements ILoading {
           @SideOnly(Side.CLIENT)
           public void exectuteClientCode() {
             if (FMLCommonHandler.instance().getSide().isClient())
-              TConstructClientRegistry.addMaterialRenderMapping(id, "tinker", mat.name().toLowerCase(), true); 
+              TConstructClientRegistry.addMaterialRenderMapping(id, "tinker", mat.name().toLowerCase(), true);
           }
         });
     FluidRegistry.registerFluid(unstable);
@@ -180,9 +180,9 @@ public class TConIntegration implements ILoading {
     List<CastingRecipe> newRecipies = new LinkedList<CastingRecipe>();
     for (CastingRecipe recipe : TConstructRegistry.getTableCasting().getCastingRecipes()) {
       if (recipe.castingMetal.getFluid() != TinkerSmeltery.moltenIronFluid || recipe.cast == null || !(recipe.cast.getItem() instanceof tconstruct.library.util.IPattern) || !(recipe.getResult().getItem() instanceof tconstruct.library.tools.DynamicToolPart))
-        continue; 
+        continue;
       newRecipies.add(recipe);
-    } 
+    }
     FluidType ft = FluidType.getFluidType(unstable);
     for (CastingRecipe recipe : newRecipies) {
       ItemStack output = recipe.getResult().copy();
@@ -190,7 +190,7 @@ public class TConIntegration implements ILoading {
       FluidStack liquid2 = new FluidStack(unstable, recipe.castingMetal.amount);
       TConstructRegistry.getTableCasting().addCastingRecipe(output, liquid2, recipe.cast, recipe.consumeCast, recipe.coolTime);
       Smeltery.addMelting(ft, output, 0, liquid2.amount / 2);
-    } 
+    }
     tag = new NBTTagCompound();
     tag.setInteger("MaterialId", id);
     tag.setTag("Item", (NBTBase)(new ItemStack(ExtraUtils.unstableIngot, 1, 0)).writeToNBT(new NBTTagCompound()));
@@ -208,40 +208,40 @@ public class TConIntegration implements ILoading {
           }
         });
   }
-  
+
   public void init() {
     addBedrockiumMaterial();
     addUnstableMaterial();
     addMagicWoodMaterial();
     addModifiers();
   }
-  
+
   public void addModifiers() {
-    ModifyBuilder.registerModifier((ItemModifier)new ModExtraModifier(new ItemStack[] { new ItemStack((Item)ExtraUtils.soul, 1, 0) }"XUSoul"));
+    ModifyBuilder.registerModifier((ItemModifier)new ModExtraModifier(new ItemStack[] { new ItemStack((Item)ExtraUtils.soul, 1, 0) }, "XUSoul"));
   }
-  
+
   public void preInit() {}
-  
+
   public void postInit() {
     if (PHConstruct.alternativeBoltRecipe)
-      return; 
+      return;
     LiquidCasting tb = TConstructRegistry.getTableCasting();
     for (ListIterator<CastingRecipe> iterator = tb.getCastingRecipes().listIterator(); iterator.hasNext(); ) {
       CastingRecipe castingRecipe = iterator.next();
       if (castingRecipe == null || castingRecipe.getClass() != CastingRecipe.class)
-        continue; 
+        continue;
       if (castingRecipe.output == null || castingRecipe.output.getItem() != TinkerWeaponry.partBolt)
-        continue; 
+        continue;
       if (castingRecipe.cast == null || castingRecipe.cast.getItem() != TinkerTools.toolRod)
-        continue; 
+        continue;
       int materialID = ToolBuilder.instance.getMaterialID(castingRecipe.cast);
       if (materialID <= 0)
-        continue; 
+        continue;
       if (materialID == ExtraUtils.tcon_unstable_material_id)
-        iterator.set(new TConCastingRecipeUnsensitive(castingRecipe)); 
+        iterator.set(new TConCastingRecipeUnsensitive(castingRecipe));
       if (materialID == ExtraUtils.tcon_bedrock_material_id)
-        iterator.set(new TConCastingRecipeUnsensitive(castingRecipe)); 
-    } 
+        iterator.set(new TConCastingRecipeUnsensitive(castingRecipe));
+    }
   }
 }
 

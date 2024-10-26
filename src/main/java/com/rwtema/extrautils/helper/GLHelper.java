@@ -6,34 +6,34 @@ import org.lwjgl.opengl.GL11;
 
 public class GLHelper {
   public static int state_level = -1;
-  
+
   public static final int max_state_level = 256;
-  
+
   public static final TIntByteHashMap[] maps = new TIntByteHashMap[256];
-  
+
   public static void pushGLState() {
     state_level++;
     if (maps[state_level] == null) {
       maps[state_level] = new TIntByteHashMap();
     } else {
       maps[state_level].clear();
-    } 
+    }
   }
-  
+
   public static boolean enableGLState(int state) {
     boolean b = GL11.glIsEnabled(state);
-    maps[state_level].putIfAbsent(state, b ? 1 : 0);
+    maps[state_level].putIfAbsent(state, b ? (byte)1 : (byte)0);
     GL11.glEnable(state);
     return b;
   }
-  
+
   public static boolean disableGLState(int state) {
     boolean b = GL11.glIsEnabled(state);
-    maps[state_level].putIfAbsent(state, b ? 1 : 0);
+    maps[state_level].putIfAbsent(state, b ? (byte)1 : (byte)0);
     GL11.glDisable(state);
     return b;
   }
-  
+
   public static void popGLState() {
     maps[state_level].forEachEntry(new TIntByteProcedure() {
           public boolean execute(int a, byte b) {
@@ -41,7 +41,7 @@ public class GLHelper {
               GL11.glEnable(a);
             } else {
               GL11.glDisable(a);
-            } 
+            }
             return true;
           }
         });

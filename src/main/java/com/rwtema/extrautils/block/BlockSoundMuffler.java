@@ -23,9 +23,9 @@ import net.minecraft.world.World;
 
 public class BlockSoundMuffler extends Block {
   private IIcon rainIcon;
-  
+
   private IIcon rainOnIcon;
-  
+
   public BlockSoundMuffler() {
     super(Material.cloth);
     setCreativeTab((CreativeTabs)ExtraUtils.creativeTabExtraUtils);
@@ -34,66 +34,66 @@ public class BlockSoundMuffler extends Block {
     setBlockName("extrautils:sound_muffler");
     setBlockTextureName("extrautils:sound_muffler");
   }
-  
+
   @SideOnly(Side.CLIENT)
   public void registerBlockIcons(IIconRegister par1IIconRegister) {
     this.blockIcon = par1IIconRegister.registerIcon("extrautils:sound_muffler");
     this.rainIcon = par1IIconRegister.registerIcon("extrautils:rain_muffler");
   }
-  
+
   @SideOnly(Side.CLIENT)
   public IIcon getIcon(int par1, int par2) {
     if (par2 == 1)
-      return this.rainIcon; 
+      return this.rainIcon;
     return this.blockIcon;
   }
-  
+
   public int damageDropped(int par1) {
     return par1;
   }
-  
+
   @SideOnly(Side.CLIENT)
-  public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List<ItemStack> par3List) {
+  public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
     par3List.add(new ItemStack(par1, 1, 0));
     par3List.add(new ItemStack(par1, 1, 1));
   }
-  
+
   public boolean hasTileEntity(int metadata) {
     return true;
   }
-  
+
   public TileEntity createTileEntity(World world, int metadata) {
     if (metadata == 1)
-      return (TileEntity)new TileEntityRainMuffler(); 
+      return (TileEntity)new TileEntityRainMuffler();
     return (TileEntity)new TileEntitySoundMuffler();
   }
-  
+
   public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-    if (world.getBlockMetadata(x, y, z) == 1 && 
+    if (world.getBlockMetadata(x, y, z) == 1 &&
       !XUHelper.isPlayerFake(player)) {
       NBTTagCompound tags = new NBTTagCompound();
       if (player.getEntityData().hasKey("PlayerPersisted")) {
         tags = player.getEntityData().getCompoundTag("PlayerPersisted");
       } else {
         player.getEntityData().setTag("PlayerPersisted", (NBTBase)tags);
-      } 
+      }
       if (tags.hasKey("ExtraUtilities|Rain")) {
         if (tags.getBoolean("ExtraUtilities|Rain")) {
           tags.setBoolean("ExtraUtilities|Rain", false);
           if (world.isRemote)
-            PacketTempChat.sendChat(player, "You remove the magic wool from your ears"); 
+            PacketTempChat.sendChat(player, "You remove the magic wool from your ears");
         } else {
           tags.setBoolean("ExtraUtilities|Rain", true);
           if (world.isRemote)
-            PacketTempChat.sendChat(player, "You place some magic wool in your ears"); 
-        } 
+            PacketTempChat.sendChat(player, "You place some magic wool in your ears");
+        }
       } else {
         tags.setBoolean("ExtraUtilities|Rain", true);
         if (world.isRemote)
-          PacketTempChat.sendChat(player, "You place some magic wool in your ears"); 
-      } 
+          PacketTempChat.sendChat(player, "You place some magic wool in your ears");
+      }
       return true;
-    } 
+    }
     return false;
   }
 }
